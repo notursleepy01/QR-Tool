@@ -52,7 +52,7 @@ if $darwin && [ "$(id -u)" = "0" ]; then
 fi
 
 # Escape application args
-function quote_app_args() {
+quote_app_args() {
     printf "%s" "$*" | sed -e "s/\\/\\\\/g" -e "s/"/\\"/g" -e "s/`/\\`/g" -e "s/$/\\$/g"
 }
 
