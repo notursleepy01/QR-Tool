@@ -9,15 +9,11 @@ if [ -n "$JAVA_HOME" ] ; then
         JAVACMD="$JAVA_HOME/bin/java"
     fi
     if [ ! -x "$JAVACMD" ] ; then
-        die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME
-
-If this is a JDK, rather than JRE, make sure that $JAVA_HOME/bin/java exists."
+        die "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME\n\nIf this is a JDK, rather than JRE, make sure that $JAVA_HOME/bin/java exists."
     fi
 else
     JAVACMD="java"
-    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
-
-Please set the JAVA_HOME variable in your environment to match the location of your Java installation."
+    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.\n\nPlease set the JAVA_HOME variable in your environment to match the location of your Java installation."
 fi
 
 # Determine the script directory.
@@ -53,7 +49,7 @@ fi
 
 # Escape application args
 quote_app_args() {
-    printf "%s" "$*" | sed -e "s/\\/\\\\/g" -e "s/"/\\"/g" -e "s/`/\\`/g" -e "s/$/\\$/g"
+    printf "%s" "$*" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/`/\\`/g' -e 's/\$/\\\$/g'
 }
 
 # Collect all arguments for the Java command
@@ -69,4 +65,4 @@ if $cygwin ; then
 fi
 
 # Execute Java command
-exec "$JAVACMD" "$DEFAULT_JVM_OPTS" "$JAVA_OPTS" "$GRADLE_OPTS" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$APP_ARGS"
+exec "$JAVACMD" $DEFAULT_JVM_OPTS "$JAVA_OPTS" "$GRADLE_OPTS" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$APP_ARGS"
