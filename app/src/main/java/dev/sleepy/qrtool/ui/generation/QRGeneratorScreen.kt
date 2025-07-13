@@ -13,10 +13,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import dev.sleepy.qrtool.util.QrCodeUtil
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.core.content.FileProvider
+import java.io.File
+import java.io.FileOutputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun QRGeneratorScreen() {
+fun QRGeneratorScreen(context: Context) {
     var textToEncode by remember { mutableStateOf("") }
     var generatedQrCodeBitmap by remember { mutableStateOf<Bitmap?>(null) }
 
@@ -40,12 +46,28 @@ fun QRGeneratorScreen() {
             Text("Generate QR Code")
         }
         Spacer(modifier = Modifier.height(16.dp))
-        generatedQrCodeBitmap?.let {
+        generatedQrCodeBitmap?.let { bitmap ->
             Image(
-                bitmap = it.asImageBitmap(),
+                bitmap = bitmap.asImageBitmap(),
                 contentDescription = "Generated QR Code",
                 modifier = Modifier.size(200.dp)
             )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                val file = File(context.externalCacheDir, "qr_code.png")
+                FileOutputStream(file).use { out ->
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+                }
+                val uri = FileProvider.getUriForFile(context, "dev.sleepy.qrtool.fileprovider", file)
+                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = "image/png"
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                context.startActivity(Intent.createChooser(shareIntent, "Share QR Code"))
+            }) {
+                Text("Share QR Code")
+            }
         }
     }
 }
